@@ -39,7 +39,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cdk_subcommand: "synth"
-          working_dir: "src"
+          #working_dir: "src"
 
       - name: CDK Diff
         uses: youyo/aws-cdk-github-actions@v2
