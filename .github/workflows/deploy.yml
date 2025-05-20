@@ -37,6 +37,7 @@ jobs:
       - name: CDK Synth
         uses: youyo/aws-cdk-github-actions@v2
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           cdk_subcommand: "synth"
           working_dir: "src"
 

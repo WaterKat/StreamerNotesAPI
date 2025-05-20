@@ -1,0 +1,27 @@
+name: CDK Bootstrap
+
+on:
+  workflow_dispatch:  # manual trigger
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::241654666604:role/GitHub-Actions-CI-CD
+          role-session-name: GitHubActionsBootstrap
+          aws-region: us-west-1
+
+      - name: CDK Bootstrap
+        run: |
+          npm install -g aws-cdk
+          cdk bootstrap aws://241654666604/us-west-1
