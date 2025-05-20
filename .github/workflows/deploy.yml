@@ -2,11 +2,9 @@ name: Deploy CDK via OIDC
 
 on:
   push:
-    branches:
-      - stable
+    branches: [stable]
   pull_request:
-    branches:
-      - stable  
+    branches: [stable]
 
 permissions:
   id-token: write
@@ -15,21 +13,29 @@ permissions:
 jobs:
   aws_cdk:
     runs-on: ubuntu-latest
+    
     env:
-      AWS_DEFAULT_REGION: "us-west-1"
+      AWS_DEFAULT_REGION: us-west-1
+      STACK_NAME: StreamerNotesLambdaStack
 
     steps:
-      - uses: actions/checkout@v3
-
       - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::241654666604:role/GitHub-Actions-CI-CD
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActionsSession
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install dependencies
-        run: npm install
+        run: npm i
 
       - name: Run tests
         run: npm run test
@@ -38,19 +44,21 @@ jobs:
         uses: youyo/aws-cdk-github-actions@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          cdk_subcommand: "synth"
-          #working_dir: "src"
+          cdk_subcommand: synth
+          actions_comment: true
 
       - name: CDK Diff
         uses: youyo/aws-cdk-github-actions@v2
         with:
-          cdk_subcommand: "diff"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          cdk_subcommand: diff
           actions_comment: true
 
       - name: CDK Deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:
-          cdk_subcommand: "deploy"
-          cdk_stack: "stack1"
-          cdk_args: "--require-approval never"
-          actions_comment: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          cdk_subcommand: deploy
+          cdk_stack: ${{ env.STACK_NAME }}
+          cdk_args: --require-approval never
+          actions_comment: yes
