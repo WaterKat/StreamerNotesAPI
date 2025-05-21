@@ -1,6 +1,7 @@
 name: Deploy CDK via OIDC
 
 on:
+  workflow_dispatch:
   push:
     branches: [stable]
   pull_request:
