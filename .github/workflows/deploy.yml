@@ -19,13 +19,6 @@ jobs:
       STACK_NAME: StreamerNotesLambdaStack
 
     steps:
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: GitHubActionsSession
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -40,12 +33,22 @@ jobs:
       - name: Run tests
         run: npm run test
 
-      - name: CDK Synth
-        uses: youyo/aws-cdk-github-actions@v2
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          cdk_subcommand: synth
-          actions_comment: true
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActionsSession
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: CDK Synth
+        run: npx cdk synth
+      
+      #- name: CDK Synth
+      #uses: youyo/aws-cdk-github-actions@v2
+      #with:
+      #  github_token: ${{ secrets.GITHUB_TOKEN }}
+      #  cdk_subcommand: synth
+      #  actions_comment: true
 
       - name: CDK Diff
         uses: youyo/aws-cdk-github-actions@v2
