@@ -48,6 +48,6 @@ jobs:
         run: npx cdk diff
 
       - name: CDK Deploy
-        run: npx cdk deploy
+        run: npx cdk deploy --require-approval never
 
       
