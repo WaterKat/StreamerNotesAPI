@@ -53,6 +53,8 @@ export class StreamerNotesLambdaStack extends cdk.Stack {
       return func;
     }
 
+    const health_check = makeLambda('HealthCheck', 'health');
+
     const create_note = makeLambda('CreateNote', 'notes');
     const get_notes = makeLambda('GetNotes', 'notes');
     const update_note = makeLambda('UpdateNote', 'notes');
@@ -142,6 +144,9 @@ export class StreamerNotesLambdaStack extends cdk.Stack {
         authorizationType: apigateway.AuthorizationType.COGNITO,
       });
     };
+
+    const health = api.root.addResource('health');
+    health.addMethod('GET', new LambdaIntegration(health_check));
 
     const notes = api.root.addResource('notes');
     addAuthenticatedMethod(notes, 'POST', create_note);
