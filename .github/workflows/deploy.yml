@@ -13,7 +13,7 @@ permissions:
 jobs:
   aws_cdk:
     runs-on: ubuntu-latest
-    
+
     env:
       AWS_DEFAULT_REGION: us-west-1
       STACK_NAME: StreamerNotesLambdaStack
@@ -42,26 +42,11 @@ jobs:
 
       - name: CDK Synth
         run: npx cdk synth
-      
-      #- name: CDK Synth
-      #uses: youyo/aws-cdk-github-actions@v2
-      #with:
-      #  github_token: ${{ secrets.GITHUB_TOKEN }}
-      #  cdk_subcommand: synth
-      #  actions_comment: true
 
       - name: CDK Diff
-        uses: youyo/aws-cdk-github-actions@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          cdk_subcommand: diff
-          actions_comment: true
+        run: npx cdk diff
 
       - name: CDK Deploy
-        uses: youyo/aws-cdk-github-actions@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          cdk_subcommand: deploy
-          cdk_stack: ${{ env.STACK_NAME }}
-          cdk_args: --require-approval never
-          actions_comment: yes
+        run: npx cdk deploy
+
+      
