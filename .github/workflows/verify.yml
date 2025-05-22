@@ -2,6 +2,10 @@ name: Deploy CDK via OIDC
 
 on:
   workflow_dispatch:
+  push:
+    branches: [stable]
+  pull_request:
+    branches: [stable]
 
 permissions:
   id-token: write
@@ -46,7 +50,5 @@ jobs:
       - name: CDK Diff
         run: npx cdk diff
 
-      - name: CDK Deploy
-        run: npx cdk deploy --require-approval never
 
       
